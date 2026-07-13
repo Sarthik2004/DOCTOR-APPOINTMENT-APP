@@ -8,6 +8,8 @@ import testRoute from "./routes/testRoute.js";
 import doctorRoutes from "./routes/doctorRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 
+import adminRoutes from "./routes/adminRoutes.js";
+
 dotenv.config();
 connectDB();
 const app = express();
@@ -24,6 +26,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoute);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
