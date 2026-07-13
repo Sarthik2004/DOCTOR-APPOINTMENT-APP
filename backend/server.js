@@ -4,9 +4,9 @@ import connectDB from "./config/db.js";
 import cors from "cors";
 import morgan from "morgan";
 import authRoutes from "./routes/authRoutes.js";
-import testRoute from "./routes/testRoute.js"
-import doctorRoutes from "./routes/doctorRoutes.js"
-
+import testRoute from "./routes/testRoute.js";
+import doctorRoutes from "./routes/doctorRoutes.js";
+import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -22,7 +22,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoute);
-app.use("/api/doctors", doctorRoutes)
+app.use("/api/doctors", doctorRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
