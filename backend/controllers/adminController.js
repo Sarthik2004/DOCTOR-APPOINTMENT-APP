@@ -7,11 +7,27 @@ export const getDashboard = async (req, res) => {
     const totalUsers = User.countDocuments();
     const totalDoctors = Doctor.countDocuments();
     const totalAppointments = Appointment.countDocuments();
+    const pendingAppointments = await Appointment.countDocuments({
+      status: "Pending",
+    });
+
+    const approvedAppointments = await Appointment.countDocuments({
+      status: "Approved",
+    });
+
+    const cancelledAppointments = await Appointment.countDocuments({
+      status: "Cancelled",
+    });
     res.status(200).json({
       success: true,
-      totalUsers,
-      totalDoctors,
-      totalAppointments,
+      dashboard: {
+        totalUsers,
+        totalDoctors,
+        totalAppointments,
+        pendingAppointments,
+        approvedAppointments,
+        cancelledAppointments,
+      },
     });
   } catch (error) {
     res.status(500).json({
