@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://doctor-appointment-app-fgad.onrender.com",
+  baseURL: "https://doctor-appointment-app-fgad.onrender.com/api",
 });
 
 export default api;

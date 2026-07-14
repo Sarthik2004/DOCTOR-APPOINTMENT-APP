@@ -12,7 +12,7 @@ function Navbar() {
           to="/"
           className="text-3xl font-bold bg-gradient-to-r from-violet-500 to-cyan-400 bg-clip-text text-transparent"
         >
-          MediBook
+          BookMyDoctor
         </Link>
 
         {/* Menu */}
