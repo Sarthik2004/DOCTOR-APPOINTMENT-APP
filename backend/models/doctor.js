@@ -22,7 +22,7 @@ const doctorSchema = new mongoose.Schema(
       required: true,
     },
 
-    Image: {
+    image: {
       type: String,
       default: "",
     },

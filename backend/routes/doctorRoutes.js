@@ -10,7 +10,7 @@ import { isAdmin, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", addDoctor, protect, isAdmin);
+router.post("/", protect, isAdmin, addDoctor);
 router.get("/", getDoctors);
 router.get("/:id", getDoctorById);
 router.put("/:id", protect, isAdmin, updateDoctor);

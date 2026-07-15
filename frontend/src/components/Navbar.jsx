@@ -1,8 +1,19 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { HiMenuAlt3 } from "react-icons/hi";
 
 function Navbar() {
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-violet-500/20 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -44,24 +55,37 @@ function Navbar() {
         {/* Right Side */}
         <div className="flex items-center gap-4">
 
-          <Link
-            to="/login"
-            className="hidden md:block hover:text-cyan-400 duration-300"
-          >
-            Login
-          </Link>
+          {token ? (
+            <>
+              <FaUserCircle
+                size={32}
+                className="text-cyan-400 cursor-pointer hidden md:block"
+              />
 
-          <Link
-            to="/signup"
-            className="hidden md:block bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-2 rounded-xl font-semibold hover:scale-105 duration-300"
-          >
-            Sign Up
-          </Link>
+              <button
+                onClick={handleLogout}
+                className="hidden md:block bg-red-500 hover:bg-red-600 px-5 py-2 rounded-xl font-semibold duration-300"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="hidden md:block hover:text-cyan-400 duration-300"
+              >
+                Login
+              </Link>
 
-          <FaUserCircle
-            size={32}
-            className="text-cyan-400 cursor-pointer hidden md:block"
-          />
+              <Link
+                to="/signup"
+                className="hidden md:block bg-gradient-to-r from-violet-600 to-cyan-500 px-5 py-2 rounded-xl font-semibold hover:scale-105 duration-300"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
 
           {/* Mobile Menu Icon */}
           <HiMenuAlt3
