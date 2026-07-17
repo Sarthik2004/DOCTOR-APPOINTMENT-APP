@@ -4,9 +4,12 @@ import User from "../models/user.js";
 
 export const getDashboard = async (req, res) => {
   try {
-    const totalUsers = User.countDocuments();
-    const totalDoctors = Doctor.countDocuments();
-    const totalAppointments = Appointment.countDocuments();
+    const totalUsers = await User.countDocuments();
+
+    const totalDoctors = await Doctor.countDocuments();
+
+    const totalAppointments = await Appointment.countDocuments();
+
     const pendingAppointments = await Appointment.countDocuments({
       status: "Pending",
     });
@@ -18,6 +21,7 @@ export const getDashboard = async (req, res) => {
     const cancelledAppointments = await Appointment.countDocuments({
       status: "Cancelled",
     });
+
     res.status(200).json({
       success: true,
       dashboard: {
@@ -30,6 +34,8 @@ export const getDashboard = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log("Dashboard Error:", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
