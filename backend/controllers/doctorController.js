@@ -1,23 +1,56 @@
 import Doctor from "../models/doctor.js";
+import cloudinary from "../config/cloudinary.js";
 
 export const addDoctor = async (req, res) => {
   try {
-    const { name, specialization, experience, fees, image } = req.body;
+    const { name, specialization, experience, fees } = req.body;
+
     if (!name || !specialization || !experience || !fees) {
       return res.status(400).json({
+        success: false,
         message: "All fields are required",
       });
     }
+
+    let imageUrl = "";
+
+    // Upload image to Cloudinary
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: "doctor-appointment-app",
+            },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            }
+          )
+          .end(req.file.buffer);
+      });
+
+      imageUrl = result.secure_url;
+    }
+
     const doctor = await Doctor.create({
       name,
       specialization,
       experience,
       fees,
-      image,
+      image: imageUrl,
     });
-    res.status(201).json({ message: "Doctor Added Successfully", doctor });
+
+    res.status(201).json({
+      success: true,
+      message: "Doctor Added Successfully",
+      doctor,
+    });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }

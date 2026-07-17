@@ -7,10 +7,11 @@ import {
   updateDoctor,
 } from "../controllers/doctorController.js";
 import { isAdmin, protect } from "../middleware/authMiddleware.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
-router.post("/", protect, isAdmin, addDoctor);
+router.post("/", protect, isAdmin, upload.single("image"), addDoctor);
 router.get("/", getDoctors);
 router.get("/:id", getDoctorById);
 router.put("/:id", protect, isAdmin, updateDoctor);
