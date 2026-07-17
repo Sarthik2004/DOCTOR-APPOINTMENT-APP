@@ -1,7 +1,40 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
+import api from "../../services/api";
+import { toast } from "react-toastify";
 
 function Dashboard() {
+  const [stats, setStats] = useState({
+    totalDoctors: 0,
+    totalUsers: 0,
+    totalAppointments: 0,
+    pendingAppointments: 0,
+    approvedAppointments: 0,
+    cancelledAppointments: 0,
+  });
+
+  const token = localStorage.getItem("token");
+
+  const fetchDashboardStats = async () => {
+    try {
+      const res = await api.get("/admin/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setStats(res.data.dashboard);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to load dashboard");
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
   return (
     <MainLayout>
       <section className="min-h-screen bg-slate-900 py-16 px-6">
@@ -14,22 +47,34 @@ function Dashboard() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
               <h3 className="text-slate-400">Total Doctors</h3>
-              <p className="text-4xl font-bold text-cyan-400 mt-3">0</p>
+
+              <p className="text-4xl font-bold text-cyan-400 mt-3">
+                {stats.totalDoctors}
+              </p>
             </div>
 
             <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
               <h3 className="text-slate-400">Appointments</h3>
-              <p className="text-4xl font-bold text-violet-400 mt-3">0</p>
+
+              <p className="text-4xl font-bold text-violet-400 mt-3">
+                {stats.totalAppointments}
+              </p>
             </div>
 
             <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
               <h3 className="text-slate-400">Users</h3>
-              <p className="text-4xl font-bold text-green-400 mt-3">0</p>
+
+              <p className="text-4xl font-bold text-green-400 mt-3">
+                {stats.totalUsers}
+              </p>
             </div>
 
             <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
               <h3 className="text-slate-400">Pending</h3>
-              <p className="text-4xl font-bold text-yellow-400 mt-3">0</p>
+
+              <p className="text-4xl font-bold text-yellow-400 mt-3">
+                {stats.pendingAppointments}
+              </p>
             </div>
           </div>
 
@@ -68,6 +113,29 @@ function Dashboard() {
                 Open
               </button>
             </Link>
+          </div>
+
+          {/* Extra Stats */}
+          <div className="grid md:grid-cols-2 gap-6 mt-10">
+            <div className="bg-green-900/30 border border-green-500 rounded-2xl p-6">
+              <h3 className="text-green-400 text-lg font-semibold">
+                Approved Appointments
+              </h3>
+
+              <p className="text-4xl font-bold text-white mt-2">
+                {stats.approvedAppointments}
+              </p>
+            </div>
+
+            <div className="bg-red-900/30 border border-red-500 rounded-2xl p-6">
+              <h3 className="text-red-400 text-lg font-semibold">
+                Cancelled Appointments
+              </h3>
+
+              <p className="text-4xl font-bold text-white mt-2">
+                {stats.cancelledAppointments}
+              </p>
+            </div>
           </div>
         </div>
       </section>
