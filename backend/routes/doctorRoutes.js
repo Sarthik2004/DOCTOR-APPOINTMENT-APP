@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/", protect, isAdmin, upload.single("image"), addDoctor);
 router.get("/", getDoctors);
 router.get("/:id", getDoctorById);
-router.put("/:id", protect, isAdmin, updateDoctor);
+router.put("/:id", protect, isAdmin, upload.single("image"), updateDoctor);
 router.delete("/:id", protect, isAdmin, deleteDoctor);
 
 export default router;

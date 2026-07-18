@@ -1,6 +1,7 @@
 import Doctor from "../models/doctor.js";
 import cloudinary from "../config/cloudinary.js";
 
+
 export const addDoctor = async (req, res) => {
   try {
     const { name, specialization, experience, fees } = req.body;
@@ -101,22 +102,54 @@ export const getDoctorById = async (req, res) => {
 export const updateDoctor = async (req, res) => {
   try {
     const { id } = req.params;
-    const doctor = await Doctor.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const { name, specialization, experience, fees } = req.body;
+
+    const doctor = await Doctor.findById(id);
+
     if (!doctor) {
       return res.status(404).json({
         success: false,
         message: "Doctor not found",
       });
     }
+
+    let imageUrl = doctor.image;
+
+    // Upload new image if selected
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: "doctor-appointment-app",
+            },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            }
+          )
+          .end(req.file.buffer);
+      });
+
+      imageUrl = result.secure_url;
+    }
+
+    doctor.name = name;
+    doctor.specialization = specialization;
+    doctor.experience = experience;
+    doctor.fees = fees;
+    doctor.image = imageUrl;
+
+    await doctor.save();
+
     res.status(200).json({
       success: true,
       message: "Doctor Updated Successfully",
       doctor,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       success: false,
       message: error.message,
