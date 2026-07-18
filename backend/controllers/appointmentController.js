@@ -86,6 +86,7 @@ export const updateAppointmentStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
+    // Check Appointment
     const appointment = await Appointment.findById(id);
 
     if (!appointment) {
@@ -95,6 +96,25 @@ export const updateAppointmentStatus = async (req, res) => {
       });
     }
 
+    // Valid Status Check
+    const validStatus = ["Pending", "Approved", "Cancelled"];
+
+    if (!validStatus.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    // Already Updated Check
+    if (appointment.status === status) {
+      return res.status(400).json({
+        success: false,
+        message: `Appointment is already ${status}`,
+      });
+    }
+
+    // Update Status
     appointment.status = status;
 
     await appointment.save();
@@ -105,6 +125,8 @@ export const updateAppointmentStatus = async (req, res) => {
       appointment,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       success: false,
       message: error.message,
