@@ -7,17 +7,19 @@ function DoctorCard({ doctor }) {
     <div className="bg-slate-800 border border-slate-700 rounded-3xl overflow-hidden hover:scale-105 hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] duration-300">
 
       {/* Doctor Image */}
-      <div className="h-60 bg-slate-700 flex items-center justify-center">
-        {doctor.image ? (
-          <img
-            src={doctor.image}
-            alt={doctor.name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <span className="text-7xl">👨‍⚕️</span>
-        )}
-      </div>
+     <div className="h-72 bg-slate-700 overflow-hidden">
+  {doctor.image ? (
+    <img
+      src={doctor.image}
+      alt={doctor.name}
+      className="w-full h-full object-cover object-top transition-transform duration-300 hover:scale-105"
+    />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center">
+      <span className="text-7xl">👨‍⚕️</span>
+    </div>
+  )}
+</div>
 
       <div className="p-6">
 

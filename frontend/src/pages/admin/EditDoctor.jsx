@@ -13,16 +13,26 @@ function EditDoctor() {
     specialization: "",
     experience: "",
     fees: "",
-    image: "",
   });
+
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState("");
 
   const token = localStorage.getItem("token");
 
-  // Get Doctor Details
+  // Fetch Doctor
   const fetchDoctor = async () => {
     try {
       const res = await api.get(`/doctors/${id}`);
-      setDoctor(res.data.doctor);
+
+      setDoctor({
+        name: res.data.doctor.name,
+        specialization: res.data.doctor.specialization,
+        experience: res.data.doctor.experience,
+        fees: res.data.doctor.fees,
+      });
+
+      setPreview(res.data.doctor.image);
     } catch (error) {
       console.log(error);
       toast.error("Failed to load doctor");
@@ -33,7 +43,6 @@ function EditDoctor() {
     fetchDoctor();
   }, []);
 
-  // Handle Input Change
   const handleChange = (e) => {
     setDoctor({
       ...doctor,
@@ -41,24 +50,43 @@ function EditDoctor() {
     });
   };
 
-  // Update Doctor
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await api.put(`/doctors/${id}`, doctor, {
+      const formData = new FormData();
+
+      formData.append("name", doctor.name);
+      formData.append("specialization", doctor.specialization);
+      formData.append("experience", doctor.experience);
+      formData.append("fees", doctor.fees);
+
+      if (image) {
+        formData.append("image", image);
+      }
+
+      const res = await api.put(`/doctors/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       toast.success(res.data.message);
+
       navigate("/admin/doctors");
     } catch (error) {
       console.log(error);
-      toast.error(
-        error.response?.data?.message || "Update Failed"
-      );
+
+      toast.error(error.response?.data?.message || "Update Failed");
     }
   };
 
@@ -80,6 +108,7 @@ function EditDoctor() {
               value={doctor.name}
               onChange={handleChange}
               className="w-full p-3 rounded-lg bg-slate-700 text-white"
+              required
             />
 
             <input
@@ -89,6 +118,7 @@ function EditDoctor() {
               value={doctor.specialization}
               onChange={handleChange}
               className="w-full p-3 rounded-lg bg-slate-700 text-white"
+              required
             />
 
             <input
@@ -98,6 +128,7 @@ function EditDoctor() {
               value={doctor.experience}
               onChange={handleChange}
               className="w-full p-3 rounded-lg bg-slate-700 text-white"
+              required
             />
 
             <input
@@ -107,20 +138,27 @@ function EditDoctor() {
               value={doctor.fees}
               onChange={handleChange}
               className="w-full p-3 rounded-lg bg-slate-700 text-white"
+              required
             />
 
             <input
-              type="text"
-              name="image"
-              placeholder="Image URL"
-              value={doctor.image || ""}
-              onChange={handleChange}
+              type="file"
+              accept="image/*"
+              onChange={handleImage}
               className="w-full p-3 rounded-lg bg-slate-700 text-white"
             />
 
+            {preview && (
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-40 h-40 object-cover rounded-xl border border-slate-600"
+              />
+            )}
+
             <button
               type="submit"
-              className="w-full py-3 rounded-lg bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-semibold"
+              className="w-full py-3 rounded-lg bg-gradient-to-r from-violet-600 to-cyan-500 text-white font-semibold hover:scale-105 duration-300"
             >
               Update Doctor
             </button>

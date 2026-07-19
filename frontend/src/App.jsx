@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
 import Home from "./pages/user/Home";
 import Login from "./pages/user/Login";
@@ -16,20 +17,20 @@ import ManageDoctors from "./pages/admin/ManageDoctors";
 import EditDoctor from "./pages/admin/EditDoctor";
 import AddDoctor from "./pages/admin/AddDoctor";
 import ManageAppointments from "./pages/admin/ManageAppointments";
+import NotFound from "./pages/user/NotFound";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         {/* Public Routes */}
 
         <Route path="/login" element={<Login />} />
-
         <Route path="/signup" element={<Signup />} />
-
         <Route path="/admin/login" element={<AdminLogin />} />
 
-        {/* Protected User Routes */}
+        {/* User Protected Routes */}
 
         <Route
           path="/"
@@ -76,50 +77,54 @@ function App() {
           }
         />
 
-        {/* Protected Admin Routes (abhi temporary) */}
+        {/* Admin Protected Routes */}
 
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedRoute>
+            <AdminProtectedRoute>
               <Dashboard />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
 
         <Route
           path="/admin/doctors"
           element={
-            <ProtectedRoute>
+            <AdminProtectedRoute>
               <ManageDoctors />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
-        <Route
-          path="/admin/doctors/edit/:id"
-          element={
-            <ProtectedRoute>
-              <EditDoctor />
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/admin/doctors/add"
           element={
-            <ProtectedRoute>
+            <AdminProtectedRoute>
               <AddDoctor />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/doctors/edit/:id"
+          element={
+            <AdminProtectedRoute>
+              <EditDoctor />
+            </AdminProtectedRoute>
           }
         />
 
         <Route
           path="/admin/appointments"
           element={
-            <ProtectedRoute>
+            <AdminProtectedRoute>
               <ManageAppointments />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
+
       </Routes>
     </BrowserRouter>
   );
