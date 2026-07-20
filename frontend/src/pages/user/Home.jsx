@@ -98,7 +98,7 @@ function Home() {
                 <div className="text-center">
                   <div className="text-8xl">
                     <img
-                      src="/images/docu3.png"
+                      src="/images/docu1.png"
                       alt="Doctor"
                       className="w-72 md:w-80 object-contain mx-auto"
                     />

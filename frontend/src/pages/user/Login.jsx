@@ -18,29 +18,33 @@ function Login() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-   
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-        console.log("Login button clicked");
-      const res = await api.post("/auth/login", formData);
+  try {
+    const res = await api.post("/auth/login", formData);
 
-      // Token Save
-      localStorage.setItem("token", res.data.token);
+    // Save Token
+    localStorage.setItem("token", res.data.token);
 
-      // Optional: User Save
-      if (res.data.user) {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-      }
-
-      toast.success("Login Successful");
-
-      navigate("/");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Login Failed");
+    // Save User
+    if (res.data.user) {
+      localStorage.setItem("user", JSON.stringify(res.data.user));
     }
-  };
+
+    toast.success("Login Successful");
+
+    // Redirect Based on Role
+    if (res.data.user.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/");
+    }
+
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Login Failed");
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-6">
