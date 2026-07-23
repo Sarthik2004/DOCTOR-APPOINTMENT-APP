@@ -11,6 +11,8 @@ function Login() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -18,33 +20,36 @@ function Login() {
     });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const res = await api.post("/auth/login", formData);
+    setLoading(true);
 
-    // Save Token
-    localStorage.setItem("token", res.data.token);
+    try {
+      const res = await api.post("/auth/login", formData);
 
-    // Save User
-    if (res.data.user) {
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // Save Token
+      localStorage.setItem("token", res.data.token);
+
+      // Save User
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
+
+      toast.success("Login Successful");
+
+      // Redirect Based on Role
+      if (res.data.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Login Failed");
+    } finally {
+      setLoading(false);
     }
-
-    toast.success("Login Successful");
-
-    // Redirect Based on Role
-    if (res.data.user.role === "admin") {
-      navigate("/admin/dashboard");
-    } else {
-      navigate("/");
-    }
-
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Login Failed");
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-6">
@@ -66,7 +71,8 @@ function Login() {
             placeholder="Enter Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-violet-500"
+            disabled={loading}
+            className="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-violet-500 disabled:opacity-50"
             required
           />
 
@@ -76,15 +82,28 @@ function Login() {
             placeholder="Enter Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-violet-500"
+            disabled={loading}
+            className="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none focus:border-violet-500 disabled:opacity-50"
             required
           />
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-violet-600 to-cyan-500 py-4 rounded-xl font-semibold hover:scale-105 duration-300"
+            disabled={loading}
+            className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-3 transition-all duration-300 ${
+              loading
+                ? "bg-slate-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-violet-600 to-cyan-500 hover:scale-105"
+            }`}
           >
-            Login
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Logging in...
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
 
         </form>
@@ -93,7 +112,7 @@ function Login() {
           Don't have an account?
           <Link
             to="/signup"
-            className="text-cyan-400 ml-2"
+            className="text-cyan-400 ml-2 hover:underline"
           >
             Signup
           </Link>
